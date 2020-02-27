@@ -27,7 +27,8 @@ public class Controller {
      * Метод для обработки GET запроса
      * @param id - id пользователя
      * @return пользователя с запрашиваемым id в формате JSON, или сообщение об ошибке в
-     * случае отсутствия id, либо в случае отсутствия пользователя с запрашиваемым id
+     * случае отсутствия id (Http Status 400 - Bad Request),
+     * либо в случае отсутствия пользователя с запрашиваемым id (Http Status 404 - Not Found)
      */
     @GetMapping(value = "{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<User> readUser(@PathVariable("id") Long id){
@@ -46,14 +47,15 @@ public class Controller {
 
     /**
      * Метод для обработки GET запроса
-     * @return список всех пользователей в формате JSON, или сообщение об ошибке, если в базе данных пусто
+     * @return список всех пользователей в формате JSON,
+     * или сообщение об ошибке, если в базе данных пусто (Http Status 404 - Not Found)
      */
     @GetMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<User>> readAll(){
         List<User> userList = this.userService.getAll();
 
         if(userList.isEmpty()){
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
         return new ResponseEntity<>(userList, HttpStatus.OK);
@@ -63,7 +65,7 @@ public class Controller {
      * Метод для обработки Post запроса
      * @param user - получаемый из тела запроса пользователь, которого нужно записать в базу данных
      * @return сохраненного пользователя в формате JSON, или сообщение об ошибке, если в запросе
-     * отсутствовали данные
+     * отсутствовали данные (Http Status 400 - Bad Request)
      */
     @PostMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<User> addUser(@RequestBody @Valid User user){
@@ -78,9 +80,10 @@ public class Controller {
 
     /**
      * Метод для обработки Delete запроса
-     * @param id - id пользователя
+     * @param id - id пользователя для удаления
      * @return удаленного пользователя в формате JSON, или сообщение об ошибке,
-     * случае отсутствия id, либо в случае отсутствия пользователя с запрашиваемым id
+     * случае отсутствия id (Http Status 400 - Bad Request),
+     * либо в случае отсутствия пользователя с запрашиваемым id (Http Status 404 - Not Found)
      */
     @DeleteMapping(value = "{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<User> deleteUser(@PathVariable("id") Long id){
@@ -103,9 +106,11 @@ public class Controller {
 
     /**
      * Метод для обработки Put запроса
+     * @param id - id пользователядля обновления
      * @param user получаемый из тела запроса пользователь, запись в базе данных которого нужно изменить
      * @return измененного пользователя в формате JSON, или сообщение об ошибке, если в запросе
-     * отсутствовали данные
+     * отсутствовали данные или отсутствует id (Http Status 400 - Bad Request),
+     * а также в случае отсутствия пользователя с таким id в базе данных
      */
     @PutMapping(value = "{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<User> updateUser(@RequestBody @Valid User user,

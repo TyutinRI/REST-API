@@ -8,7 +8,6 @@
     <artifactId>rest-service</artifactId>
     <version>1.0-SNAPSHOT</version>
 
-    <name>REST</name>
     <description>Simple REST API application</description>
 
     <parent>
